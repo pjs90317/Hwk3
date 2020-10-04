@@ -60,16 +60,16 @@ good_obs_data_usehh <- complete.cases(data_use_prelimhh,borough_f)
 dat_usehh <- subset(data_use_prelimhh,good_obs_data_usehh)
 y_usehh <- subset(borough_f,good_obs_data_usehh)
 NN_obshh <- sum(good_obs_data_usehh == 1)
-select1 <- (runif(NN_obshh) < 0.8)
-train_data <- subset(dat_usehh,select1)
-test_data <- subset(dat_usehh,(!select1))
-cl_data <- y_usehh[select1]
-true_data <- y_usehh[!select1]
+select1hh <- (runif(NN_obshh) < 0.8)
+train_datahh <- subset(dat_usehh,select1hh)
+test_datahh <- subset(dat_usehh,(!select1hh))
+cl_datahh <- y_usehh[select1hh]
+true_datahh <- y_usehh[!select1hh]
 for (indx in seq(1, 9, by= 2)) {
- pred_borough <- knn(train_data, test_data, cl_data, k = indx, l = 0, prob = FALSE, use.all = TRUE)
-num_correct_labels <- sum(pred_borough == true_data)
-correct_rate <- num_correct_labels/length(true_data)
-print(c(indx,correct_rate))
+ pred_boroughhh <- knn(train_datahh, test_datahh, cl_datahh, k = indx, l = 0, prob = FALSE, use.all = TRUE)
+num_correct_labelshh <- sum(pred_boroughhh == true_datahh)
+correct_ratehh <- num_correct_labelshh/length(true_datahh)
+print(c(indx,correct_ratehh))
 }
 ```
 
@@ -78,13 +78,79 @@ Including household income as a variable while holding housing cost constant imp
 I would like to try to get the algorithm to predict at rates about 0.5 for the higher k values. Initially I thought it would be best to include a very different variable, such as linguistic isolation. Linguistic isolation is the term used to describe homes in which no one over the age of 14 spoke only English or spoke another language and English "very well". My assumption is that respondents in these households would generally live near and around each other, to ensure they are in a community in which they can interact and communicate with clearly and easily. However, including this variable reduced the predictive performance of the algorithm at all levels of k, by an average of 3.6% (k = 1 by 4.5%).
 
 This result was surprising at first though upon reflection, two issues came to mind. The first is that the variable Linguistic Isolation is not rich enough to provide points of different for the algorithm. Its outcomes are either yes or no, essentially acting as a dummy variable. `r (sum(LINGISOL == 1)/sum(LINGISOL))` of respondents are not linguistically isolated and would not have to place as much importance on communication as a factor in deciding where to reside.
-```{r}
-norm_famsize <- norm_varb(FAMSIZE)
-data_use_prelimhh <- data.frame(norm_householdinc, norm_famsize, norm_housing_cost)
-# norm_housing_cost, LINGISOL
-good_obs_data_use <- complete.cases(data_use_prelim,borough_f)
-# good_obs_data_use <- complete.cases(data_use_prelim,in_Brooklyn)
-dat_use <- subset(data_use_prelim,good_obs_data_use)
-y_use <- subset(borough_f,good_obs_data_use)
-# y_use <- subset(in_Brooklyn,good_obs_data_use)
+
+Seeing the results of including linguistic isolation  prompted a step back. Focusing on interval or ratio variables, similar to income and cost, might yield better results from the algorithm. Rather than nominal variables such as birthplace or commute methods, I looked for interval variables related to the household. 
+
+I selected family size as the next variable. Generally speaking, having a larger family would imply the need for a larger dwelling, further implying a higher housing cost. Larger families with children would likely tend to live near each other, for school zoning, using child care facilities and having children in communities with other children. Smaller families without children, or houses of adults would find these considerations less important and would live in other places.
+
+To test whether family size would have a meaningful impact on the prediction rate, I included it as a third variable for the algorithm to consider.
+```{r echo=FALSE}
+data_use_prelimfs <- data.frame(norm_householdinc, norm_housing_cost, norm_famsize)
+good_obs_data_usefs <- complete.cases(data_use_prelimfs,borough_f)
+dat_usefs <- subset(data_use_prelimfs,good_obs_data_usefs)
+y_usefs <- subset(borough_f,good_obs_data_usefs)
+NN_obsfs <- sum(good_obs_data_usefs == 1)
+select1fs <- (runif(NN_obsfs) < 0.8)
+train_datafs <- subset(dat_usefs,select1fs)
+test_datafs <- subset(dat_usefs,(!select1fs))
+cl_datafs <- y_usefs[select1fs]
+true_datafs <- y_usefs[!select1fs]
+for (indx in seq(1, 9, by= 2)) {
+ pred_boroughfs <- knn(train_datafs, test_datafs, cl_datafs, k = indx, l = 0, prob = FALSE, use.all = TRUE)
+num_correct_labelsfs <- sum(pred_boroughfs == true_datafs)
+correct_ratefs <- num_correct_labelsfs/length(true_datafs)
+print(c(indx,correct_ratefs))
+}
+```
+
+```{r, echo=FALSE}
+hhrate <- c(0.7291351, 0.5027354, 0.4846933, 0.4658363, 0.4598999)
+fsrate <- c(0.7611435, 0.4670945,0.4550758, 0.4490082, 0.4393232)
+fshigherk <- c(0.4670945,0.4550758, 0.4490082, 0.4393232)
+hhhigherk <- c(0.5027354, 0.4846933, 0.4658363, 0.4598999)
+```
+The results are interesting. The algorithm becomes more accurate when k = 1. For higher values of k, the algorithm is slightly *less* accurate. However, the deviation between prediction rates of higher values of k is smaller when family size is included. Despite the prediction rates being an average of `r mean(hhrate-fsrate)` lower than those produced without family size included, there is less variation in the rates as k increases.
+
+It is clear from the three different combinations of variables that as k increases, the ability of the algorithm to correctly classify the observations decreases. Understanding the context of the different variables allows us to continue to refine the algorithm iteration after iteration to improve its accuracy of classifying the test data. However, as we include more variables, it gives the algorithm more points of difference to assess when processing test or unclassified data.  
+
+Similarly, we could use a high proportion of our data set to train the algorithm but would it leave us a with a meaningful amount of observations upon which to test the algorithm? If the test set is small and homogeneous, we could well be fooled into thinking the algorithm is more than satisfactory in classifying values but when applied to large unclassified sets of data falls short of the predication rates produced during the test.  
+
+Reducing the error in the prediction rate the known data may increase potential error in classifying unknown data. If the algorithm has been programmed to factor in particular variables using someone's intuition, applying the knowledge and context that they have of the data set, the algorithm is susceptible to the biases that the programmer holds about the data set. Household income may not be the best indicator for borough prediction because of New York City's public housing policies, today and through the twentieth century.  [Here](http://assets.press.princeton.edu/chapters/i10548.pdf), on pp.6-7, is an interesting map of current and defunct public and subsidized housing throughout the five boroughs. The map quickly displays the concentration of subsidized housing throughout mid-Brooklyn, the top of Manhattan and throughout the Bronx, alongside the lack of it in Staten Island. Without reviewing similarly relevant information prior to training any algorithm, previous assumptions made about a data set may not be given adequate scrutiny. 
+
+The trade off between classifying the training data and the test data comes from:  
+
+* Knowing and understanding the context of the data
+  * does the programmer have the relevant knowledge to identify a minimum number of useful variables?
+  * conversely, does the same programmer have the vision to exclude un-useful observations?
+  
+* Utilizing enough classified observations to train the algorithm whilst maintaining a larger enough test set to adequately test the algorithm.
+
+Referring to the [map](http://assets.press.princeton.edu/chapters/i10548.pdf), it seems apparent the algorithm could be trained to classify the neighborhoods. Removing household income and replacing it with another variable may give us insight into the locations of different groups. Combining housing cost, family size and ancestry may shine a little on whether people of differing ancestries tend to reside near those of similar backgrounds. If that is the case, the prediction rates could also indicate which neighborhoods tend to see that phenomenon.
+```{r eval = FALSE, echo=FALSE}
+detach(dat_NYC)
+dat_NH <- subset(acs2017_ny, (acs2017_ny$PUMA == 3707)|(acs2017_ny$PUMA == 3801)| (acs2017_ny$PUMA == 4004)|(acs2017_ny$PUMA == 4006)&(acs2017_ny$AGE > 20) & (acs2017_ny$AGE < 66))
+attach(dat_NH)
+neighborhood_f <- factor((PUMA == 3707) + 2*(PUMA == 3801) + 3*(PUMA == 4004) + 4*(PUMA == 4006), levels=c(1,2,3,4),labels = c("Morris Heights","Inwood","Fort Greene","Crown Heights"))
+norm_householdincnh <- norm_varb(HHINCOME)
+norm_famsizenh <- norm_varb(FAMSIZE)
+data_use_prelimnh <- data.frame(norm_famsizenh, norm_housing_costnh)
+good_obs_data_usenh <- complete.cases(data_use_prelimnh,neighborhood_f)
+dat_usenh <- subset(data_use_prelimnh,good_obs_data_usenh)
+y_usenh <- subset(neighborhood_f,good_obs_data_usenh)
+set.seed(12345)
+NN_obsnh <- sum(good_obs_data_usenh == 1)
+select1nh <- (runif(NN_obsnh) < 0.8)
+train_datanh <- subset(dat_usenh,select1nh)
+test_datanh <- subset(dat_usenh,(!select1nh))
+cl_datanh <- y_usenh[select1nh]
+true_datanh <- y_use[!select1nh]
+summary(cl_datanh)
+prop.table(summary(cl_datanh))
+summary(train_datanh)
+for (indx in seq(1, 9, by= 2)) {
+  pred_neighborhood <- knn(train_datanh, test_datanh, cl_datanh, k = indx, l = 0, prob = FALSE, use.all = TRUE)
+  num_correct_labelsnh <- sum(pred_neighborhood == true_datanh)
+  correct_ratenh <- num_correct_labelsnh/length(true_datanh)
+  print(c(indx,correct_ratenh))
+}
 ```

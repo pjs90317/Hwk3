@@ -78,13 +78,88 @@ outcomes are either yes or no, essentially acting as a dummy variable.
 have to place as much importance on communication as a factor in
 deciding where to reside.
 
-``` r
-norm_famsize <- norm_varb(FAMSIZE)
-data_use_prelimhh <- data.frame(norm_householdinc, norm_famsize, norm_housing_cost)
-# norm_housing_cost, LINGISOL
-good_obs_data_use <- complete.cases(data_use_prelim,borough_f)
-# good_obs_data_use <- complete.cases(data_use_prelim,in_Brooklyn)
-dat_use <- subset(data_use_prelim,good_obs_data_use)
-y_use <- subset(borough_f,good_obs_data_use)
-# y_use <- subset(in_Brooklyn,good_obs_data_use)
-```
+Seeing the results of including linguistic isolation prompted a step
+back. Focusing on interval or ratio variables, similar to income and
+cost, might yield better results from the algorithm. Rather than nominal
+variables such as birthplace or commute methods, I looked for interval
+variables related to the household.
+
+I selected family size as the next variable. Generally speaking, having
+a larger family would imply the need for a larger dwelling, further
+implying a higher housing cost. Larger families with children would
+likely tend to live near each other, for school zoning, using child care
+facilities and having children in communities with other children.
+Smaller families without children, or houses of adults would find these
+considerations less important and would live in other places.
+
+To test whether family size would have a meaningful impact on the
+prediction rate, I included it as a third variable for the algorithm to
+consider.
+
+    ## [1] 1.0000000 0.7531125
+    ## [1] 3.0000000 0.4657035
+    ## [1] 5.0000000 0.4628847
+    ## [1] 7.0000000 0.4524313
+    ## [1] 9.0000000 0.4498473
+
+The results are interesting. The algorithm becomes more accurate when k
+= 1. For higher values of k, the algorithm is slightly *less* accurate.
+However, the deviation between prediction rates of higher values of k is
+smaller when family size is included. Despite the prediction rates being
+an average of 0.014131 lower than those produced without family size
+included, there is less variation in the rates as k increases.
+
+It is clear from the three different combinations of variables that as k
+increases, the ability of the algorithm to correctly classify the
+observations decreases. Understanding the context of the different
+variables allows us to continue to refine the algorithm iteration after
+iteration to improve its accuracy of classifying the test data. However,
+as we include more variables, it gives the algorithm more points of
+difference to assess when processing test or unclassified data.
+
+Similarly, we could use a high proportion of our data set to train the
+algorithm but would it leave us a with a meaningful amount of
+observations upon which to test the algorithm? If the test set is small
+and homogeneous, we could well be fooled into thinking the algorithm is
+more than satisfactory in classifying values but when applied to large
+unclassified sets of data falls short of the predication rates produced
+during the test.
+
+Reducing the error in the prediction rate the known data may increase
+potential error in classifying unknown data. If the algorithm has been
+programmed to factor in particular variables using someone’s intuition,
+applying the knowledge and context that they have of the data set, the
+algorithm is susceptible to the biases that the programmer holds about
+the data set. Household income may not be the best indicator for borough
+prediction because of New York City’s public housing policies, today and
+through the twentieth century.
+[Here](http://assets.press.princeton.edu/chapters/i10548.pdf), on
+pp.6-7, is an interesting map of current and defunct public and
+subsidized housing throughout the five boroughs. The map quickly
+displays the concentration of subsidized housing throughout
+mid-Brooklyn, the top of Manhattan and throughout the Bronx, alongside
+the lack of it in Staten Island. Without reviewing similarly relevant
+information prior to training any algorithm, previous assumptions made
+about a data set may not be given adequate scrutiny.
+
+The trade off between classifying the training data and the test data
+comes from:
+
+  - Knowing and understanding the context of the data
+      - does the programmer have the relevant knowledge to identify a
+        minimum number of useful variables?
+      - conversely, does the same programmer have the vision to exclude
+        un-useful observations?
+  - Utilizing enough classified observations to train the algorithm
+    whilst maintaining a larger enough test set to adequately test the
+    algorithm.
+
+Referring to the
+[map](http://assets.press.princeton.edu/chapters/i10548.pdf), it seems
+apparent the algorithm could be trained to classify the neighborhoods.
+Removing household income and replacing it with another variable may
+give us insight into the locations of different groups. Combining
+housing cost, family size and ancestry may shine a little on whether
+people of differing ancestries tend to reside near those of similar
+backgrounds. If that is the case, the prediction rates could also
+indicate which neighborhoods tend to see that phenomenon.

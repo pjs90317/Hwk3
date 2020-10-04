@@ -6,6 +6,7 @@ output: github_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+setwd("~/CCNY/Econometrics/Homework/Draft Hwk Files/Lab 2")
 load("acs2017_ny_data.RData")
 ```
 For the initial k-nn classification, the determining variables were personal Income Total and Housing Cost, and the population was limited to NYC residents between the ages of 21 and 65.

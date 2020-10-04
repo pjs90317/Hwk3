@@ -8,6 +8,30 @@ to NYC residents between the ages of 21 and 65.
 
 Which returned the following results:
 
+    ##         Bronx     Manhattan Staten Island      Brooklyn        Queens 
+    ##          4880          5250          1891         12416         10923
+
+    ##         Bronx     Manhattan Staten Island      Brooklyn        Queens 
+    ##    0.13800905    0.14847285    0.05347851    0.35113122    0.30890837
+
+    ##     norm_inc      norm_housing_cost
+    ##  Min.   :0.0000   Min.   :0.00000  
+    ##  1st Qu.:0.9478   1st Qu.:0.02216  
+    ##  Median :0.9731   Median :0.03083  
+    ##  Mean   :0.9574   Mean   :0.41028  
+    ##  3rd Qu.:0.9881   3rd Qu.:0.97507  
+    ##  Max.   :1.0000   Max.   :1.00000
+
+Using these variables and a training data set of 80% of the already
+classified data points, the algorithm returned the following correct
+prediction rates of k = 1, 3, 5, 7 and 9
+
+    ## [1] 1.0000000 0.3525155
+    ## [1] 3.0000000 0.3441305
+    ## [1] 5.0000000 0.3606708
+    ## [1] 7.0000000 0.3700896
+    ## [1] 9.0000000 0.3757179
+
 ``` r
 dat_NYC <- subset(acs2017_ny, (acs2017_ny$in_NYC == 1)&(acs2017_ny$AGE > 20) & (acs2017_ny$AGE < 66))
 # dat_NYCa <- subset(acs2017_ny, (acs2017_ny$in_NYC == 1)&(acs2017_ny$AGE > 24) & (acs2017_ny$AGE < 66))

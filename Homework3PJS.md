@@ -163,3 +163,51 @@ housing cost, family size and ancestry may shine a little on whether
 people of differing ancestries tend to reside near those of similar
 backgrounds. If that is the case, the prediction rates could also
 indicate which neighborhoods tend to see that phenomenon.
+
+    ## The following object is masked _by_ .GlobalEnv:
+    ## 
+    ##     OWNCOST
+
+    ## The following objects are masked from dat_NYC:
+    ## 
+    ##     AfAm, AGE, Amindian, ANCESTR1, ANCESTR1D, ANCESTR2, ANCESTR2D,
+    ##     Asian, below_150poverty, below_200poverty, below_povertyline, BPL,
+    ##     BPLD, BUILTYR2, CITIZEN, CLASSWKR, CLASSWKRD, Commute_bus,
+    ##     Commute_car, Commute_other, Commute_rail, Commute_subway, COSTELEC,
+    ##     COSTFUEL, COSTGAS, COSTWATR, DEGFIELD, DEGFIELD2, DEGFIELD2D,
+    ##     DEGFIELDD, DEPARTS, EDUC, educ_advdeg, educ_college, educ_hs,
+    ##     educ_nohs, educ_somecoll, EDUCD, EMPSTAT, EMPSTATD, FAMSIZE,
+    ##     female, foodstamps, FOODSTMP, FTOTINC, FUELHEAT, GQ,
+    ##     has_AnyHealthIns, has_PvtHealthIns, HCOVANY, HCOVPRIV, HHINCOME,
+    ##     Hisp_Cuban, Hisp_DomR, Hisp_Mex, Hisp_PR, HISPAN, HISPAND,
+    ##     Hispanic, in_Bronx, in_Brooklyn, in_Manhattan, in_Nassau, in_NYC,
+    ##     in_Queens, in_StatenI, in_Westchester, INCTOT, INCWAGE, IND,
+    ##     LABFORCE, LINGISOL, MARST, MIGCOUNTY1, MIGPLAC1, MIGPUMA1,
+    ##     MIGRATE1, MIGRATE1D, MORTGAGE, NCHILD, NCHLT5, OCC, OWNCOST,
+    ##     OWNERSHP, OWNERSHPD, POVERTY, PUMA, PWPUMA00, RACE, race_oth,
+    ##     RACED, RELATE, RELATED, RENT, ROOMS, SCHOOL, SEX, SSMC, TRANTIME,
+    ##     TRANWORK, UHRSWORK, UNITSSTR, unmarried, veteran, VETSTAT,
+    ##     VETSTATD, white, WKSWORK2, YRSUSA1
+
+    ## Warning in OWNCOST + RENT: longer object length is not a multiple of shorter
+    ## object length
+
+    ## Morris Heights         Inwood    Fort Greene  Crown Heights 
+    ##            484            608            702            579
+
+    ## Morris Heights         Inwood    Fort Greene  Crown Heights 
+    ##      0.2039612      0.2562158      0.2958281      0.2439949
+
+    ##  norm_famsizenh    norm_householdincnh
+    ##  Min.   :0.09091   Min.   :0.0000     
+    ##  1st Qu.:0.72727   1st Qu.:0.9049     
+    ##  Median :0.90909   Median :0.9497     
+    ##  Mean   :0.84940   Mean   :0.9239     
+    ##  3rd Qu.:1.00000   3rd Qu.:0.9760     
+    ##  Max.   :1.00000   Max.   :1.0000
+
+    ## [1] 1.0000000 0.6655791
+    ## [1] 3.0000000 0.4420881
+    ## [1] 5.0000000 0.4632953
+    ## [1] 7.0000000 0.4584013
+    ## [1] 9.0000000 0.4469821

@@ -126,14 +126,15 @@ The trade off between classifying the training data and the test data comes from
 * Utilizing enough classified observations to train the algorithm whilst maintaining a larger enough test set to adequately test the algorithm.
 
 Referring to the [map](http://assets.press.princeton.edu/chapters/i10548.pdf), it seems apparent the algorithm could be trained to classify the neighborhoods. Removing household income and replacing it with another variable may give us insight into the locations of different groups. Combining housing cost, family size and ancestry may shine a little on whether people of differing ancestries tend to reside near those of similar backgrounds. If that is the case, the prediction rates could also indicate which neighborhoods tend to see that phenomenon.
-```{r eval = FALSE, echo=FALSE}
-detach(dat_NYC)
-dat_NH <- subset(acs2017_ny, (acs2017_ny$PUMA == 3707)|(acs2017_ny$PUMA == 3801)| (acs2017_ny$PUMA == 4004)|(acs2017_ny$PUMA == 4006)&(acs2017_ny$AGE > 20) & (acs2017_ny$AGE < 66))
+```{r echo=FALSE}
+dat_NH <- subset(dat_NYC, (dat_NYC$PUMA == 3707)|(dat_NYC$PUMA == 3801)| (dat_NYC$PUMA == 4004)|(dat_NYC$PUMA == 4006)&(dat_NYC$AGE > 20) & (dat_NYC$AGE < 66))
 attach(dat_NH)
 neighborhood_f <- factor((PUMA == 3707) + 2*(PUMA == 3801) + 3*(PUMA == 4004) + 4*(PUMA == 4006), levels=c(1,2,3,4),labels = c("Morris Heights","Inwood","Fort Greene","Crown Heights"))
 norm_householdincnh <- norm_varb(HHINCOME)
 norm_famsizenh <- norm_varb(FAMSIZE)
-data_use_prelimnh <- data.frame(norm_famsizenh, norm_housing_costnh)
+housingcostnh <- OWNCOST + RENT
+norm_housing_costnh <- norm_varb(housingcostnh)
+data_use_prelimnh <- data.frame(norm_famsizenh, norm_householdincnh)
 good_obs_data_usenh <- complete.cases(data_use_prelimnh,neighborhood_f)
 dat_usenh <- subset(data_use_prelimnh,good_obs_data_usenh)
 y_usenh <- subset(neighborhood_f,good_obs_data_usenh)
@@ -143,7 +144,7 @@ select1nh <- (runif(NN_obsnh) < 0.8)
 train_datanh <- subset(dat_usenh,select1nh)
 test_datanh <- subset(dat_usenh,(!select1nh))
 cl_datanh <- y_usenh[select1nh]
-true_datanh <- y_use[!select1nh]
+true_datanh <- y_usenh[!select1nh]
 summary(cl_datanh)
 prop.table(summary(cl_datanh))
 summary(train_datanh)

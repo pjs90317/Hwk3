@@ -42,11 +42,11 @@ may work in low salaried positions but are still members of high income
 households. Changing income total to household income produced the
 following prediction rates.
 
-    ## [1] 1.0000000 0.7312239
-    ## [1] 3.0000000 0.4909851
-    ## [1] 5.0000000 0.4711642
-    ## [1] 7.0000000 0.4623284
-    ## [1] 9.0000000 0.4557612
+    ## [1] 1.0000000 0.7318556
+    ## [1] 3.0000000 0.4948159
+    ## [1] 5.0000000 0.4817066
+    ## [1] 7.0000000 0.4657371
+    ## [1] 9.0000000 0.4631152
 
 Including household income as a variable while holding housing cost
 constant improves the algorithms’ ability to predict the classification
@@ -58,17 +58,17 @@ trend in prediction rate is due to larger gaps between high income
 households and low income households than the comparative gaps for
 individuals.
 
-I would like to try to get the algorithm to predict at rates about 0.5
-for the higher k values. Initially I thought it would be best to include
-a very different variable, such as linguistic isolation. Linguistic
-isolation is the term used to describe homes in which no one over the
-age of 14 spoke only English or spoke another language and English “very
-well”. My assumption is that respondents in these households would
-generally live near and around each other, to ensure they are in a
-community in which they can interact and communicate with clearly and
-easily. However, including this variable reduced the predictive
-performance of the algorithm at all levels of k, by an average of 3.6%
-(k = 1 by 4.5%).
+I would like to try to get the algorithm to predict at rates at or above
+0.5 for the higher k values. Initially I thought it would be best to
+include a very different variable, such as linguistic isolation.
+Linguistic isolation is the term used to describe homes in which no one
+over the age of 14 spoke only English or spoke another language and
+English “very well”. My assumption is that respondents in these
+households would generally live near and around each other, to ensure
+they are in a community in which they can interact and communicate with
+clearly and easily. However, including this variable reduced the
+predictive performance of the algorithm at all levels of k, by an
+average of 3.6% (k = 1 by 4.5%).
 
 This result was surprising at first though upon reflection, two issues
 came to mind. The first is that the variable Linguistic Isolation is not
@@ -96,18 +96,19 @@ To test whether family size would have a meaningful impact on the
 prediction rate, I included it as a third variable for the algorithm to
 consider.
 
-    ## [1] 1.0000000 0.7531125
-    ## [1] 3.0000000 0.4657035
-    ## [1] 5.0000000 0.4628847
-    ## [1] 7.0000000 0.4524313
-    ## [1] 9.0000000 0.4498473
+    ## [1] 1.0000000 0.7554523
+    ## [1] 3.0000000 0.4700274
+    ## [1] 5.0000000 0.4619235
+    ## [1] 7.0000000 0.4551305
+    ## [1] 9.0000000 0.4472649
 
 The results are interesting. The algorithm becomes more accurate when k
 = 1. For higher values of k, the algorithm is slightly *less* accurate.
 However, the deviation between prediction rates of higher values of k is
 smaller when family size is included. Despite the prediction rates being
-an average of 0.014131 lower than those produced without family size
-included, there is less variation in the rates as k increases.
+an average of 0.0094864 lower than those produced without family size
+included, there is less variation in the rates as k increases 0.009698
+compared to 0.014804.
 
 It is clear from the three different combinations of variables that as k
 increases, the ability of the algorithm to correctly classify the
@@ -133,9 +134,9 @@ algorithm is susceptible to the biases that the programmer holds about
 the data set. Household income may not be the best indicator for borough
 prediction because of New York City’s public housing policies, today and
 through the twentieth century.
-[Here](http://assets.press.princeton.edu/chapters/i10548.pdf), on
-pp.6-7, is an interesting map of current and defunct public and
-subsidized housing throughout the five boroughs. The map quickly
+[Here](http://assets.press.princeton.edu/chapters/i10548.pdf),
+(Schalliol, pp.6-7) is an interesting map of current and defunct public
+and subsidized housing throughout the five boroughs. The map quickly
 displays the concentration of subsidized housing throughout
 mid-Brooklyn, the top of Manhattan and throughout the Bronx, alongside
 the lack of it in Staten Island. Without reviewing similarly relevant
@@ -164,50 +165,40 @@ people of differing ancestries tend to reside near those of similar
 backgrounds. If that is the case, the prediction rates could also
 indicate which neighborhoods tend to see that phenomenon.
 
-    ## The following object is masked _by_ .GlobalEnv:
-    ## 
-    ##     OWNCOST
-
-    ## The following objects are masked from dat_NYC:
-    ## 
-    ##     AfAm, AGE, Amindian, ANCESTR1, ANCESTR1D, ANCESTR2, ANCESTR2D,
-    ##     Asian, below_150poverty, below_200poverty, below_povertyline, BPL,
-    ##     BPLD, BUILTYR2, CITIZEN, CLASSWKR, CLASSWKRD, Commute_bus,
-    ##     Commute_car, Commute_other, Commute_rail, Commute_subway, COSTELEC,
-    ##     COSTFUEL, COSTGAS, COSTWATR, DEGFIELD, DEGFIELD2, DEGFIELD2D,
-    ##     DEGFIELDD, DEPARTS, EDUC, educ_advdeg, educ_college, educ_hs,
-    ##     educ_nohs, educ_somecoll, EDUCD, EMPSTAT, EMPSTATD, FAMSIZE,
-    ##     female, foodstamps, FOODSTMP, FTOTINC, FUELHEAT, GQ,
-    ##     has_AnyHealthIns, has_PvtHealthIns, HCOVANY, HCOVPRIV, HHINCOME,
-    ##     Hisp_Cuban, Hisp_DomR, Hisp_Mex, Hisp_PR, HISPAN, HISPAND,
-    ##     Hispanic, in_Bronx, in_Brooklyn, in_Manhattan, in_Nassau, in_NYC,
-    ##     in_Queens, in_StatenI, in_Westchester, INCTOT, INCWAGE, IND,
-    ##     LABFORCE, LINGISOL, MARST, MIGCOUNTY1, MIGPLAC1, MIGPUMA1,
-    ##     MIGRATE1, MIGRATE1D, MORTGAGE, NCHILD, NCHLT5, OCC, OWNCOST,
-    ##     OWNERSHP, OWNERSHPD, POVERTY, PUMA, PWPUMA00, RACE, race_oth,
-    ##     RACED, RELATE, RELATED, RENT, ROOMS, SCHOOL, SEX, SSMC, TRANTIME,
-    ##     TRANWORK, UHRSWORK, UNITSSTR, unmarried, veteran, VETSTAT,
-    ##     VETSTATD, white, WKSWORK2, YRSUSA1
-
-    ## Warning in OWNCOST + RENT: longer object length is not a multiple of shorter
-    ## object length
-
     ## Morris Heights         Inwood    Fort Greene  Crown Heights 
     ##            484            608            702            579
 
     ## Morris Heights         Inwood    Fort Greene  Crown Heights 
     ##      0.2039612      0.2562158      0.2958281      0.2439949
 
-    ##  norm_famsizenh    norm_householdincnh
-    ##  Min.   :0.09091   Min.   :0.0000     
-    ##  1st Qu.:0.72727   1st Qu.:0.9049     
-    ##  Median :0.90909   Median :0.9497     
-    ##  Mean   :0.84940   Mean   :0.9239     
-    ##  3rd Qu.:1.00000   3rd Qu.:0.9760     
-    ##  Max.   :1.00000   Max.   :1.0000
+    ##  norm_famsizenh    norm_housing_costnh norm_householdincnh
+    ##  Min.   :0.09091   Min.   :0.00000     Min.   :0.0000     
+    ##  1st Qu.:0.72727   1st Qu.:0.01927     1st Qu.:0.9049     
+    ##  Median :0.90909   Median :0.02602     Median :0.9497     
+    ##  Mean   :0.84940   Mean   :0.20803     Mean   :0.9239     
+    ##  3rd Qu.:1.00000   3rd Qu.:0.03363     3rd Qu.:0.9760     
+    ##  Max.   :1.00000   Max.   :1.00000     Max.   :1.0000
 
-    ## [1] 1.0000000 0.6655791
-    ## [1] 3.0000000 0.4420881
-    ## [1] 5.0000000 0.4632953
-    ## [1] 7.0000000 0.4584013
-    ## [1] 9.0000000 0.4469821
+    ## [1] 1.0000000 0.7292007
+    ## [1] 3.0000000 0.4665579
+    ## [1] 5.0000000 0.4959217
+    ## [1] 7.0000000 0.4714519
+    ## [1] 9.0000000 0.4926591
+
+The sample of 4 neighborhoods returns higher prediction rates as k
+increases. However, the sample size of the neighborhoods is too small to
+generalize for the entire city. The selection of the neighborhoods
+reflects my bias; Inwood is where I live in Manhattan, Morris Heights is
+across the bridge in The Bronx, nearby to a university and community
+college, Fort Greene and Crown Heights were selected to demonstrate
+potential differences of household income in nearby neighborhoods in a
+single borough. Predicting neighborhoods for New York City may be more
+accurate if variables like ancestry were included but given the
+transient nature of many of the city’s inhabitants and recent shocks to
+the real estate market, it is likely the predictions of the algorithm
+would hold only for a short period of time.
+
+**Bibiliography** Schalliol, D. (2016). Affordable Housing in New York:
+The People, Places, and Policies That Transformed a City (Bloom N. &
+Lasner M., Eds.). Princeton; Oxford: Princeton University Press.
+<http://assets.press.princeton.edu/chapters/i10548.pdf>

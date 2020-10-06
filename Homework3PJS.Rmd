@@ -6,8 +6,9 @@ output: github_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-setwd("~/CCNY/Econometrics/Homework/Draft Hwk Files/Lab 2")
+setwd("~/CCNY/Econometrics/Homework/Draft Hwk Files")
 load("acs2017_ny_data.RData")
+setwd("~/CCNY/Econometrics/Homework/Draft Hwk Files/Homework-3")
 library(class)
 ```
 For the initial k-nn classification, the determining variables were personal Income Total and Housing Cost, and the population was limited to NYC residents between the ages of 21 and 65.
@@ -19,7 +20,9 @@ borough_f <- factor((in_Bronx + 2*in_Manhattan + 3*in_StatenI + 4*in_Brooklyn + 
 norm_varb <- function(X_in) {
   (max(X_in, na.rm = TRUE) - X_in)/( max(X_in, na.rm = TRUE) - min(X_in, na.rm = TRUE) )
 }
-is.na(OWNCOST) <- which(OWNCOST == 9999999)
+```
+```{r echo = FALSE}
+is.na <- which(OWNCOST == 9999999)
 housing_cost <- OWNCOST + RENT
 norm_inc <- norm_varb(INCTOT)
 norm_housing_cost <- norm_varb(housing_cost)
@@ -54,6 +57,7 @@ print(c(indx,correct_rate))
 
 The two variables good hand in hand - higher levels of income would suggest higher housing costs for those households. Of the two variables, I wanted to keep one constant and see how the predication rates would change in response to one variable change. Instead of using Income Total, which is per individual, I changed the variable to Household Income. This variable has more connection to housing costs. Individuals may work in low salaried positions but are still members of high income households. Changing income total to household income produced the following prediction rates.  
 ```{r echo=FALSE}
+set.seed(12345)
 norm_famsize <- norm_varb(FAMSIZE)
 data_use_prelimhh <- data.frame(norm_householdinc, norm_housing_cost)
 good_obs_data_usehh <- complete.cases(data_use_prelimhh,borough_f)
@@ -69,13 +73,13 @@ for (indx in seq(1, 9, by= 2)) {
  pred_boroughhh <- knn(train_datahh, test_datahh, cl_datahh, k = indx, l = 0, prob = FALSE, use.all = TRUE)
 num_correct_labelshh <- sum(pred_boroughhh == true_datahh)
 correct_ratehh <- num_correct_labelshh/length(true_datahh)
-print(c(indx,correct_ratehh))
+print(c(indx, correct_ratehh))
 }
 ```
 
 Including household income as a variable while holding housing cost constant improves the algorithms' ability to predict the classification of observations into the boroughs overall, with a noticeable larger uptick when k = 1.  However, as the k number increases, our prediction rate gets gradually less accurate. In the previous instance, there was a slight uptick in k = 7 and k = 9. I would contend that the downward trend in prediction rate is due to larger gaps between high income households and low income households than the comparative gaps for individuals.  
 
-I would like to try to get the algorithm to predict at rates about 0.5 for the higher k values. Initially I thought it would be best to include a very different variable, such as linguistic isolation. Linguistic isolation is the term used to describe homes in which no one over the age of 14 spoke only English or spoke another language and English "very well". My assumption is that respondents in these households would generally live near and around each other, to ensure they are in a community in which they can interact and communicate with clearly and easily. However, including this variable reduced the predictive performance of the algorithm at all levels of k, by an average of 3.6% (k = 1 by 4.5%).
+I would like to try to get the algorithm to predict at rates at or above 0.5 for the higher k values. Initially I thought it would be best to include a very different variable, such as linguistic isolation. Linguistic isolation is the term used to describe homes in which no one over the age of 14 spoke only English or spoke another language and English "very well". My assumption is that respondents in these households would generally live near and around each other, to ensure they are in a community in which they can interact and communicate with clearly and easily. However, including this variable reduced the predictive performance of the algorithm at all levels of k, by an average of 3.6% (k = 1 by 4.5%).
 
 This result was surprising at first though upon reflection, two issues came to mind. The first is that the variable Linguistic Isolation is not rich enough to provide points of different for the algorithm. Its outcomes are either yes or no, essentially acting as a dummy variable. `r (sum(LINGISOL == 1)/sum(LINGISOL))` of respondents are not linguistically isolated and would not have to place as much importance on communication as a factor in deciding where to reside.
 
@@ -85,6 +89,7 @@ I selected family size as the next variable. Generally speaking, having a larger
 
 To test whether family size would have a meaningful impact on the prediction rate, I included it as a third variable for the algorithm to consider.
 ```{r echo=FALSE}
+set.seed(12345)
 data_use_prelimfs <- data.frame(norm_householdinc, norm_housing_cost, norm_famsize)
 good_obs_data_usefs <- complete.cases(data_use_prelimfs,borough_f)
 dat_usefs <- subset(data_use_prelimfs,good_obs_data_usefs)
@@ -99,23 +104,23 @@ for (indx in seq(1, 9, by= 2)) {
  pred_boroughfs <- knn(train_datafs, test_datafs, cl_datafs, k = indx, l = 0, prob = FALSE, use.all = TRUE)
 num_correct_labelsfs <- sum(pred_boroughfs == true_datafs)
 correct_ratefs <- num_correct_labelsfs/length(true_datafs)
-print(c(indx,correct_ratefs))
+print(c(indx, correct_ratefs))
 }
-```
+``` 
 
 ```{r, echo=FALSE}
-hhrate <- c(0.7291351, 0.5027354, 0.4846933, 0.4658363, 0.4598999)
-fsrate <- c(0.7611435, 0.4670945,0.4550758, 0.4490082, 0.4393232)
-fshigherk <- c(0.4670945,0.4550758, 0.4490082, 0.4393232)
-hhhigherk <- c(0.5027354, 0.4846933, 0.4658363, 0.4598999)
+hhrate <- c(0.7318556, 0.4948159, 0.4817066, 0.4657371, 0.4631152)
+fsrate <- c(0.7554523, 0.4700274, 0.4619235, 0.4551305, 0.4472649)
+fshigherk <- c(0.4700274, 0.4619235, 0.4551305, 0.4472649)
+hhhigherk <- c(0.4948159, 0.4817066, 0.4657371, 0.4631152)
 ```
-The results are interesting. The algorithm becomes more accurate when k = 1. For higher values of k, the algorithm is slightly *less* accurate. However, the deviation between prediction rates of higher values of k is smaller when family size is included. Despite the prediction rates being an average of `r mean(hhrate-fsrate)` lower than those produced without family size included, there is less variation in the rates as k increases.
+The results are interesting. The algorithm becomes more accurate when k = 1. For higher values of k, the algorithm is slightly *less* accurate. However, the deviation between prediction rates of higher values of k is smaller when family size is included. Despite the prediction rates being an average of `r mean(hhrate-fsrate)` lower than those produced without family size included, there is less variation in the rates as k increases `r sd(fshigherk)` compared to `r sd(hhhigherk)`.
 
 It is clear from the three different combinations of variables that as k increases, the ability of the algorithm to correctly classify the observations decreases. Understanding the context of the different variables allows us to continue to refine the algorithm iteration after iteration to improve its accuracy of classifying the test data. However, as we include more variables, it gives the algorithm more points of difference to assess when processing test or unclassified data.  
 
 Similarly, we could use a high proportion of our data set to train the algorithm but would it leave us a with a meaningful amount of observations upon which to test the algorithm? If the test set is small and homogeneous, we could well be fooled into thinking the algorithm is more than satisfactory in classifying values but when applied to large unclassified sets of data falls short of the predication rates produced during the test.  
 
-Reducing the error in the prediction rate the known data may increase potential error in classifying unknown data. If the algorithm has been programmed to factor in particular variables using someone's intuition, applying the knowledge and context that they have of the data set, the algorithm is susceptible to the biases that the programmer holds about the data set. Household income may not be the best indicator for borough prediction because of New York City's public housing policies, today and through the twentieth century.  [Here](http://assets.press.princeton.edu/chapters/i10548.pdf), on pp.6-7, is an interesting map of current and defunct public and subsidized housing throughout the five boroughs. The map quickly displays the concentration of subsidized housing throughout mid-Brooklyn, the top of Manhattan and throughout the Bronx, alongside the lack of it in Staten Island. Without reviewing similarly relevant information prior to training any algorithm, previous assumptions made about a data set may not be given adequate scrutiny. 
+Reducing the error in the prediction rate the known data may increase potential error in classifying unknown data. If the algorithm has been programmed to factor in particular variables using someone's intuition, applying the knowledge and context that they have of the data set, the algorithm is susceptible to the biases that the programmer holds about the data set. Household income may not be the best indicator for borough prediction because of New York City's public housing policies, today and through the twentieth century.  [Here](http://assets.press.princeton.edu/chapters/i10548.pdf), (Schalliol, pp.6-7)  is an interesting map of current and defunct public and subsidized housing throughout the five boroughs. The map quickly displays the concentration of subsidized housing throughout mid-Brooklyn, the top of Manhattan and throughout the Bronx, alongside the lack of it in Staten Island. Without reviewing similarly relevant information prior to training any algorithm, previous assumptions made about a data set may not be given adequate scrutiny. 
 
 The trade off between classifying the training data and the test data comes from:  
 
@@ -127,6 +132,7 @@ The trade off between classifying the training data and the test data comes from
 
 Referring to the [map](http://assets.press.princeton.edu/chapters/i10548.pdf), it seems apparent the algorithm could be trained to classify the neighborhoods. Removing household income and replacing it with another variable may give us insight into the locations of different groups. Combining housing cost, family size and ancestry may shine a little on whether people of differing ancestries tend to reside near those of similar backgrounds. If that is the case, the prediction rates could also indicate which neighborhoods tend to see that phenomenon.
 ```{r echo=FALSE}
+detach()
 dat_NH <- subset(dat_NYC, (dat_NYC$PUMA == 3707)|(dat_NYC$PUMA == 3801)| (dat_NYC$PUMA == 4004)|(dat_NYC$PUMA == 4006)&(dat_NYC$AGE > 20) & (dat_NYC$AGE < 66))
 attach(dat_NH)
 neighborhood_f <- factor((PUMA == 3707) + 2*(PUMA == 3801) + 3*(PUMA == 4004) + 4*(PUMA == 4006), levels=c(1,2,3,4),labels = c("Morris Heights","Inwood","Fort Greene","Crown Heights"))
@@ -134,7 +140,7 @@ norm_householdincnh <- norm_varb(HHINCOME)
 norm_famsizenh <- norm_varb(FAMSIZE)
 housingcostnh <- OWNCOST + RENT
 norm_housing_costnh <- norm_varb(housingcostnh)
-data_use_prelimnh <- data.frame(norm_famsizenh, norm_householdincnh)
+data_use_prelimnh <- data.frame(norm_famsizenh, norm_housing_costnh, norm_householdincnh)
 good_obs_data_usenh <- complete.cases(data_use_prelimnh,neighborhood_f)
 dat_usenh <- subset(data_use_prelimnh,good_obs_data_usenh)
 y_usenh <- subset(neighborhood_f,good_obs_data_usenh)
@@ -148,6 +154,7 @@ true_datanh <- y_usenh[!select1nh]
 summary(cl_datanh)
 prop.table(summary(cl_datanh))
 summary(train_datanh)
+require(class)
 for (indx in seq(1, 9, by= 2)) {
   pred_neighborhood <- knn(train_datanh, test_datanh, cl_datanh, k = indx, l = 0, prob = FALSE, use.all = TRUE)
   num_correct_labelsnh <- sum(pred_neighborhood == true_datanh)
@@ -155,3 +162,7 @@ for (indx in seq(1, 9, by= 2)) {
   print(c(indx,correct_ratenh))
 }
 ```
+The sample of 4 neighborhoods returns higher prediction rates as k increases. However, the sample size of the neighborhoods is too small to generalize for the entire city. The selection of the neighborhoods reflects my bias; Inwood is where I live in Manhattan, Morris Heights is across the bridge in The Bronx, nearby to a university and community college, Fort Greene and Crown Heights were selected to demonstrate potential differences of household income in nearby neighborhoods in a single borough. Predicting neighborhoods for New York City may be more accurate if variables like ancestry were included but given the transient nature of many of the city's inhabitants and recent shocks to the real estate market, it is likely the predictions of the algorithm would hold only for a short period of time.
+
+**Bibiliography**
+Schalliol, D. (2016). Affordable Housing in New York: The People, Places, and Policies That Transformed a City (Bloom N. & Lasner M., Eds.). Princeton; Oxford: Princeton University Press. http://assets.press.princeton.edu/chapters/i10548.pdf
